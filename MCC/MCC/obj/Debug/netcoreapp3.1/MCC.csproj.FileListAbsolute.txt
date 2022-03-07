@@ -1,0 +1,16 @@
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\bin\Debug\netcoreapp3.1\MCC.exe
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\bin\Debug\netcoreapp3.1\MCC.deps.json
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\bin\Debug\netcoreapp3.1\MCC.runtimeconfig.json
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\bin\Debug\netcoreapp3.1\MCC.runtimeconfig.dev.json
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\bin\Debug\netcoreapp3.1\MCC.dll
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\bin\Debug\netcoreapp3.1\MCC.pdb
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.GeneratedMSBuildEditorConfig.editorconfig
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.AssemblyInfoInputs.cache
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.AssemblyInfo.cs
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.csproj.CoreCompileInputs.cache
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.dll
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.pdb
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.genruntimeconfig.cache
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.csproj.AssemblyReference.cache
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\bin\Debug\netcoreapp3.1\_Project\file1.mcc
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC\bin\Debug\netcoreapp3.1\_Project\mainFile.mcc
