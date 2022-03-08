@@ -1,6 +1,8 @@
 ﻿using MCC.MCCLanguage.Infrastructure;
+using MCC.OutputLanguage;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace MCC
@@ -17,6 +19,11 @@ namespace MCC
             this.Namespace = file.Namespace;
             this.FilePath = file.FilePath;
             this.Func = function;
+        }
+
+        public string GetFullyQualifiedIdentifier()
+        {
+            return CodeGenerator.GetMinecraftNamespacedId( this.Namespace, this.Func.Identifier );
         }
     }
 
@@ -40,9 +47,9 @@ namespace MCC
     public class Mapper
     {
         /// <summary>
-        /// returns a list of all functions in the given project and their locations
+        /// returns a list of all functions in the given project and their locations. Validates the function map.
         /// </summary>
-        public static List<MCCFunctionMapping> GetFunctionMap( List<MCCFile> files )
+        public static List<MCCFunctionMapping> GetFunctionMapAndValidate( List<MCCFile> files )
         {
             // each function maps to a (string @namespace, string filePath, string functionName)
             List<MCCFunctionMapping> mappings = new List<MCCFunctionMapping>();
@@ -53,6 +60,14 @@ namespace MCC
                 {
                     MCCFunctionMapping map = new MCCFunctionMapping( file, func );
 
+                    string fullyQualifiedId = map.GetFullyQualifiedIdentifier();
+
+                    var duplicatedMappings = mappings.FindAll( x => x.GetFullyQualifiedIdentifier() == fullyQualifiedId );
+                    if( duplicatedMappings.Any() )
+                    {
+                        var duplicatedFileNames = duplicatedMappings.Select( m => $"'{m.FilePath}'" );
+                        throw new Exception( $"Duplicated fully qualified function name '{fullyQualifiedId}' in files: {string.Join(", ", duplicatedFileNames)}" );
+                    }
                     mappings.Add( map );
                 }
             }

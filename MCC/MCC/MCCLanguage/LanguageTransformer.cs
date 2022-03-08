@@ -8,7 +8,7 @@ namespace MCC.MCCLanguage
     /// <summary>
     /// Performs transformation on the language to bring it to the simplest form. To a form that code gen can use.
     /// </summary>
-    public class LanguageTransformer
+    public static class LanguageTransformer
     {
         public static void Simplify( MCCFile file )
         {
@@ -38,7 +38,7 @@ namespace MCC.MCCLanguage
                 newFunc.Identifier = $"{command.Func.Identifier}.gen_{i}";
                 newFunc.Body = command.Cmd.InlineFunctionBody;
 
-                file.AddFunction( newFunc );
+                file.Functions.Add( newFunc );
 
                 command.Cmd.RawCommand += "function " + newFunc.Identifier; // append the new function to the command, the code gen will know what to do with it.
                 i++;

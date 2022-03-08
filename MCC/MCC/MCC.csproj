@@ -6,10 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="_Project\file1.mcc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="_Project\mainFile.mcc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="_Project\spike_trap.mcc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

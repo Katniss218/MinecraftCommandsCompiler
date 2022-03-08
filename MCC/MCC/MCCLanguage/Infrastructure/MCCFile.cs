@@ -17,15 +17,5 @@ namespace MCC.MCCLanguage.Infrastructure
             Namespace = @namespace;
             FilePath = filePath;
         }
-
-        public void AddFunction( MCCFunction func )
-        {
-            if( Functions.Find( f => f.Identifier == func.Identifier ) != null )
-            {
-                throw new Exception( $"Duplicated function name '{func.Identifier}' in file '{FilePath}'" );
-            }
-
-            Functions.Add( func );
-        }
     }
 }

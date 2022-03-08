@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace MCC.OutputLanguage
@@ -12,34 +13,51 @@ namespace MCC.OutputLanguage
         /// Returns the namespaced ID used to call an .mcfunction file from a datapack
         /// </summary>
         /// <remarks>
-        /// namespace:filePath/filePath2/filePath3/functionName
+        /// namespace.namespace2.namespace3.fileName.mcc
+        /// namespace:namespace2/namespace3/functionName
         /// </remarks>
-        public static string GetMinecraftNamespacedId( string @namespace, string filePath, string functionName )
+        public static string GetMinecraftNamespacedId( string @namespace, string functionName )
         {
-            return $"{@namespace}:{filePath}/{functionName}";
+            string[] namespaceWords = @namespace.Split( '.' );
+
+            if( namespaceWords.Length == 1 )
+            {
+                return $"{namespaceWords[0]}:{functionName}";
+            }
+            else
+            {
+                return $"{namespaceWords[0]}:{string.Join( "/", namespaceWords[1..] )}/{functionName}";
+            }
         }
 
         /// <summary>
         /// Returns the path to an .mcfunction file inside the datapack
         /// </summary>
-        public static string GetMinecraftPath( string @namespace, string filePath, string functionName )
+        public static string GetMinecraftPath( string @namespace, string functionName )
         {
-            return @namespace
-                + Path.DirectorySeparatorChar + "functions"
-                + Path.DirectorySeparatorChar + GetResultFileName( filePath )
-                + Path.DirectorySeparatorChar + functionName + ".mcfunction";
-        }
+            string[] namespaceWords = @namespace.Split( '.' );
 
-        public static string GetResultFileName( string mccFileName )
-        {
-            return string.Join( "", mccFileName.Split( '.' )[..^1] );
+            if( namespaceWords.Length == 1 )
+            {
+                return namespaceWords[0]
+                    + Path.DirectorySeparatorChar + "functions"
+                    + Path.DirectorySeparatorChar + functionName + ".mcfunction";
+            }
+            else
+            {
+                return namespaceWords[0]
+                    + Path.DirectorySeparatorChar + "functions"
+                    + Path.DirectorySeparatorChar + string.Join( "/", namespaceWords[1..] )
+                    + Path.DirectorySeparatorChar + functionName + ".mcfunction";
+            }
         }
 
         public string ProcessCommand( string @namespace, string fileName, string functionName, string command )
         {
             // the parameters describe where the command is, not what it calls.
-
+            // -------------
             // replace function identifier calls with their appropriate namespaced ids.
+
             int index = command.IndexOf( "function" );
             if( index != -1 )
             {
@@ -51,28 +69,26 @@ namespace MCC.OutputLanguage
                 if( !calleeName.Contains( ':' ) )
                 {
                     // find where the function being called actually is.
-                    MCCFunctionMapping mapping = Mappings.Find( n => n.Func.Identifier == calleeName );
-
-                    return beginning + GetMinecraftNamespacedId( mapping.Namespace, GetResultFileName( mapping.FilePath ), mapping.Func.Identifier );
+                    MCCFunctionMapping mapping = this.Proj.Mappings.Find( n => n.Func.Identifier == calleeName );
+#warning TODO - currently doesn't support two functions with the same id within different namespaces.
+                    return beginning + GetMinecraftNamespacedId( mapping.Namespace, mapping.Func.Identifier );
                 }
             }
 
             return command;
         }
 
-        List<MCCFunctionMapping> Mappings;
+        public MCCProject Proj { get; set; }
 
-        public List<MCCFile> Files { get; set; }
-
-        public CodeGenerator( List<MCCFile> files )
+        public CodeGenerator( MCCProject proj )
         {
-            this.Files = files;
-            this.Mappings = Mapper.GetFunctionMap( Files );
+            this.Proj = proj;
         }
 
         public void GenerateOutput( string outputPath, string datapackName )
         {
-            foreach( var file in this.Files )
+#warning todo - add the functions marked with Tick and Load to the respective tags.
+            foreach( var file in this.Proj.Files )
             {
                 foreach( var func in file.Functions )
                 {
@@ -108,7 +124,7 @@ namespace MCC.OutputLanguage
 
                     */
 
-                    string path = GetMinecraftPath( file.Namespace, file.FilePath, func.Identifier );
+                    string path = GetMinecraftPath( file.Namespace, func.Identifier );
 
                     string filePath = datapackName
                         + Path.DirectorySeparatorChar + "data"

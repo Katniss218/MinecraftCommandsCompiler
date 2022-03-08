@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "KTMX+4vceOmogsWCSQij/xBPoiM/8k3+FUVJ88Hl5cIW8s+WMizhWwjqNzxoIaWqheSRpWLiqFshgcxcchq6cg==",
+  "dgSpecHash": "0weKnJlxoG1k8NuGyZkH9KIxZNwcSxi4Fvzb0E5U/3nIr6E9uMxuVDubdAaH/1k8WAkuhG1WfIi+zsWCfbHGWg==",
   "success": true,
   "projectFilePath": "E:\\GIT\\MinecraftCommandsCompiler\\MCC\\MCC\\MCC.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Katniss218\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
   "logs": []
 }

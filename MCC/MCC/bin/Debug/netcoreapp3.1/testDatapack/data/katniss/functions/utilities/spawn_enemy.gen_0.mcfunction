@@ -1,0 +1,1 @@
+﻿scoreboard players set @s __a__ 1

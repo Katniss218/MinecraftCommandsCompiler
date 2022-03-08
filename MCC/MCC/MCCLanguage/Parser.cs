@@ -144,6 +144,11 @@ namespace MCC.MCCLanguage
 
             StringBuilder sb = new StringBuilder();
 
+            if( !IsValidIdentifierChar( CurrentChar ) )
+            {
+                throw new Exception( $"Expected a valid identifier character at {Pos}, found '{CurrentChar}'" );
+            }
+
             while( IsValidIdentifierChar( CurrentChar ) )
             {
                 sb.Append( CurrentChar );
@@ -175,14 +180,14 @@ namespace MCC.MCCLanguage
         public MCCCommand EatCommand()
         {
             // command
-            //  : char* ~new_line
-            //  : char* 'run' new_line whitespace* '{' function_body '}'
+            //  : char* ~(new_line|'}')
+            //  : char* 'run' new_line whitespace* function_body
             //  ;
 
             StringBuilder sb = new StringBuilder();
 
 #warning refactor this to not be reliant on the newline
-            while( CurrentChar != '\n' && CurrentChar != '\r' )
+            while( CurrentChar != '\n' && CurrentChar != '\r' /*&& CurrentChar != '}'*/ ) // either newline or the encapsulating function ended (need to be wary of NBT)
             {
                 sb.Append( CurrentChar );
                 Pos++;
@@ -190,17 +195,18 @@ namespace MCC.MCCLanguage
 
             string cmd = sb.ToString();
 
-            if( cmd.EndsWith( "run" ) )
+            if( string.IsNullOrEmpty( cmd ) )
+            {
+                return null;
+            }
+
+            if( cmd.Trim().EndsWith( "run" ) ) // trailing whitespaces
             {
                 EatNewLine();
 
                 EatWhiteSpaces();
 
-                EatKeyword( "{" );
-
                 MCCFunction.FunctionBody body = EatFunctionBody();
-
-                EatKeyword( "}" );
 
                 cmd = sb.ToString();
 
@@ -213,8 +219,10 @@ namespace MCC.MCCLanguage
         public MCCFunction.FunctionBody EatFunctionBody()
         {
             // function_body
-            //  : (whitespace* command whitespace*)*
+            //  : '{' (whitespace* command whitespace*)* '}'
             //  ;
+
+            EatKeyword( "{" );
 
             MCCFunction.FunctionBody body = new MCCFunction.FunctionBody();
             while( CurrentChar != '}' )
@@ -225,8 +233,13 @@ namespace MCC.MCCLanguage
 
                 EatWhiteSpaces();
 
-                body.Commands.Add( command );
+                if( command != null )
+                {
+                    body.Commands.Add( command );
+                }
             }
+
+            EatKeyword( "}" );
 
             return body;
         }
@@ -234,7 +247,7 @@ namespace MCC.MCCLanguage
         public MCCFunction EatFunction()
         {
             // function
-            //  : (attribute whitespace*)* 'function' whitespace* identifier whitespace* '{' function_body '}'
+            //  : (attribute whitespace*)* 'function' whitespace* identifier whitespace* function_body
             //  ;
 
             MCCFunction func = new MCCFunction();
@@ -264,19 +277,12 @@ namespace MCC.MCCLanguage
             EatWhiteSpaces();
 
             string identifier = EatIdentifier();
+            func.Identifier = identifier;
 
             EatWhiteSpaces();
 
-            EatKeyword( "{" );
-
             MCCFunction.FunctionBody body = EatFunctionBody();
-
-            EatKeyword( "}" );
-
             func.Body = body;
-            func.Identifier = identifier;
-            func.Load = false;
-            func.Tick = false;
 
             return func;
         }
@@ -305,6 +311,7 @@ namespace MCC.MCCLanguage
                 EatWhiteSpaces();
 
                 MCCFunction func = EatFunction();
+
                 file.Functions.Add( func );
 
                 EatWhiteSpaces();

@@ -1,7 +1,14 @@
-﻿namespace test
+﻿namespace katniss.utilities
 
 function spawn_enemy
 {
-    execute at @s run summon zombie ~ ~ ~
+    tp @s ~ ~ ~
+
+    execute at @e[type=zombie] run summon zombie ~ ~ ~
     scoreboard players add __global__ __utils__ 1
+    
+    execute as @s run
+    {
+        scoreboard players set @s __a__ 1
+    }
 }

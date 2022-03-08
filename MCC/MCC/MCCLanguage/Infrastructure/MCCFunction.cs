@@ -9,7 +9,6 @@ namespace MCC.MCCLanguage.Infrastructure
         public class FunctionBody
         {
             public List<MCCCommand> Commands { get; set; } = new List<MCCCommand>();
-#warning todo - prevent duplicate names
         }
 
         public string Identifier { get; set; }
