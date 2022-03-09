@@ -8,7 +8,6 @@ namespace MCC.MCCLanguage.Infrastructure
     {
         public List<MCCFile> Files { get; set; } = new List<MCCFile>();
 
-        public
-        List<MCCFunctionMapping> Mappings { get; set; }
+        public List<MCCFunctionMapping> Mappings { get; set; }
     }
 }

@@ -1,0 +1,25 @@
+namespace katniss.tests.mcc
+
+[load]
+function ___load
+{
+    scoreboard objectives add utils dummy "Utils"
+}
+
+[tick]
+function ___tick
+{
+    execute as @e[type=armor_stand] at @s run 
+    {
+        particle dust 1 1 1 2 ~ ~ ~ 0.2 0.2 0.2 0 40 force @a
+        particle dust 1 0 0 2 ~ ~1 ~ 0.2 0.2 0.2 0 20 force @a
+        particle dust 1 1 0 2 ~ ~2 ~ 0.2 0.2 0.2 0 10 force @a
+
+        scoreboard players add @s utils 1
+        execute if score @s utils matches 10 run
+        {
+            playsound minecraft:block.iron_trapdoor.open hostile @a ~ ~ ~ 1 0.4
+            scoreboard players set @s utils 0
+        }
+    }
+}

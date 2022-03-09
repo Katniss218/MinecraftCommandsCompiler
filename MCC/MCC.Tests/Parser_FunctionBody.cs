@@ -94,10 +94,40 @@ namespace MCC.Tests
         }
 
         [Test]
+        public void TwoCommands_WithComment()
+        {
+            parser.SetFile( "test.mcc", @"{
+    summon zombie ~ ~ ~
+    // hello there
+    summon zombie ~ ~ ~
+}" );
+            MCCFunction.FunctionBody parsed = null;
+
+            Assert.DoesNotThrow( () => parsed = parser.EatFunctionBody() );
+            Utils.AssertTrueAndLog( "Commands.Count", parsed.Commands.Count, 2, Utils.Equals );
+        }
+
+        [Test]
         public void TwoCommands_WithEmptyLine()
         {
             parser.SetFile( "test.mcc", @"{
     summon zombie ~ ~ ~
+
+    summon zombie ~ ~ ~
+}" );
+            MCCFunction.FunctionBody parsed = null;
+
+            Assert.DoesNotThrow( () => parsed = parser.EatFunctionBody() );
+            Utils.AssertTrueAndLog( "Commands.Count", parsed.Commands.Count, 2, Utils.Equals );
+        }
+
+        [Test]
+        public void TwoCommands_WithEmptyLinesAndComment()
+        {
+            parser.SetFile( "test.mcc", @"{
+    summon zombie ~ ~ ~
+
+    // hello there
 
     summon zombie ~ ~ ~
 }" );
@@ -168,14 +198,10 @@ namespace MCC.Tests
             parser.SetFile( "test.mcc", @"{
     execute as @a at @s run
     {
-        summon zombie ~ ~ ~
-
         execute as @a at @s run
         {
             summon zombie ~ ~ ~
         }
-
-        summon zombie ~ ~ ~
     }
 }" );
 
@@ -183,6 +209,8 @@ namespace MCC.Tests
 
             Assert.DoesNotThrow( () => parsed = parser.EatFunctionBody() );
             Utils.AssertTrueAndLog( "Commands.Count", parsed.Commands.Count, 1, Utils.Equals );
+            Utils.AssertTrueAndLog( "Commands.InlineFunctionBody", parsed.Commands[0].InlineFunctionBody, null, (x,y) => x != y );
+            Utils.AssertTrueAndLog( "Nested Commands.Count", parsed.Commands[0].InlineFunctionBody.Commands.Count, 1, Utils.Equals );
         }
 
         [Test]

@@ -104,6 +104,4 @@ E:\GIT\MinecraftCommandsCompiler\MCC\MCC.Tests\obj\Debug\netcoreapp3.1\MCC.Tests
 E:\GIT\MinecraftCommandsCompiler\MCC\MCC.Tests\obj\Debug\netcoreapp3.1\MCC.Tests.dll
 E:\GIT\MinecraftCommandsCompiler\MCC\MCC.Tests\obj\Debug\netcoreapp3.1\MCC.Tests.pdb
 E:\GIT\MinecraftCommandsCompiler\MCC\MCC.Tests\obj\Debug\netcoreapp3.1\MCC.Tests.genruntimeconfig.cache
-E:\GIT\MinecraftCommandsCompiler\MCC\MCC.Tests\bin\Debug\netcoreapp3.1\_Project\file1.mcc
-E:\GIT\MinecraftCommandsCompiler\MCC\MCC.Tests\bin\Debug\netcoreapp3.1\_Project\mainFile.mcc
-E:\GIT\MinecraftCommandsCompiler\MCC\MCC.Tests\bin\Debug\netcoreapp3.1\_Project\spike_trap.mcc
+E:\GIT\MinecraftCommandsCompiler\MCC\MCC.Tests\bin\Debug\netcoreapp3.1\_Project\test.mcc

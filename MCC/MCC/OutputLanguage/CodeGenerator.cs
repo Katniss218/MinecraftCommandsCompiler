@@ -1,4 +1,6 @@
 ﻿using MCC.MCCLanguage.Infrastructure;
+using MCC.OutputLanguage.Infrastructure;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -70,7 +72,7 @@ namespace MCC.OutputLanguage
                 {
                     // find where the function being called actually is.
                     MCCFunctionMapping mapping = this.Proj.Mappings.Find( n => n.Func.Identifier == calleeName );
-#warning TODO - currently doesn't support two functions with the same id within different namespaces.
+#warning TODO - currently doesn't support two functions with the same id within different namespaces - use the transformer to force fully qualified names always. then convert those.
                     return beginning + GetMinecraftNamespacedId( mapping.Namespace, mapping.Func.Identifier );
                 }
             }
@@ -85,8 +87,48 @@ namespace MCC.OutputLanguage
             this.Proj = proj;
         }
 
+        public static string ToJson( object obj )
+        {
+            return JsonConvert.SerializeObject( obj, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            } );
+        }
+
+        public static void WriteFile( string filePath, string contents )
+        {
+            string dirPath = Path.GetDirectoryName( filePath );
+            if( !Directory.Exists( dirPath ) )
+            {
+                Directory.CreateDirectory( dirPath );
+            }
+
+            File.WriteAllText( filePath, contents, new UTF8Encoding( false ) );
+        }
+
         public void GenerateOutput( string outputPath, string datapackName )
         {
+#warning todo - generator tests
+            string datapackPath = outputPath
+                        + datapackName;
+
+            McMeta pack = new McMeta()
+            {
+                Pack = new McMeta.PackData()
+                {
+                    PackFormat = 6,
+                    Description = "test datapack"
+                }
+            };
+
+            WriteFile( datapackPath + Path.DirectorySeparatorChar + "pack.mcmeta", ToJson( pack ) );
+
+            string dataPath = datapackName
+                        + Path.DirectorySeparatorChar + "data";
+
+            string minecraftNamespacePath = dataPath
+                + Path.DirectorySeparatorChar + "minecraft";
+
 #warning todo - add the functions marked with Tick and Load to the respective tags.
             foreach( var file in this.Proj.Files )
             {
@@ -109,40 +151,53 @@ namespace MCC.OutputLanguage
 
                     string fileContents = sb.ToString();
 
-                    // function namespace:filename/identifier/nestedidentifiers/etc/etc
-
                     /*
 
-                    datapack_name
-                        data
-                            namespace
-                                functions
+                    'datapack_name'
+                        'data'
+                            <namespace>
+                                'functions'
                                     ...
-                                tags
-                                    functions
+                            'minecraft'
+                                'tags'
+                                    'functions'
                                         ...
 
                     */
 
-                    string path = GetMinecraftPath( file.Namespace, func.Identifier );
+                    string minecraftPath = GetMinecraftPath( file.Namespace, func.Identifier );
 
-                    string filePath = datapackName
-                        + Path.DirectorySeparatorChar + "data"
-                        + Path.DirectorySeparatorChar + path;
+                    string filePath = dataPath
+                        + Path.DirectorySeparatorChar + minecraftPath;
 
                     string absolutePath = outputPath + Path.DirectorySeparatorChar + filePath;
-                    string absoluteDirPath = Path.GetDirectoryName( absolutePath );
-
-                    if( !Directory.Exists( absoluteDirPath ) )
-                    {
-                        Directory.CreateDirectory( absoluteDirPath );
-                    }
-
-                    File.WriteAllText( absolutePath, fileContents, Encoding.UTF8 );
+                    
+                    WriteFile( absolutePath, fileContents );
                 }
-                // for each function, generate an mcfunction file.
-                // safe the mcfunction file.
             }
+
+            Tag functionTagTick = new Tag();
+            Tag functionTagLoad = new Tag();
+
+            string minecraftFuncAbsPath = outputPath + minecraftNamespacePath + Path.DirectorySeparatorChar + "tags" + Path.DirectorySeparatorChar + "functions";
+
+            var funcsTick = Proj.Mappings.Where( m => m.Func.Tick );
+            foreach( var funcTick in funcsTick )
+            {
+                functionTagTick.Values.Add( funcTick.GetFullyQualifiedIdentifier() );
+            }
+
+            var funcsLoad = Proj.Mappings.Where( m => m.Func.Load );
+            foreach( var funcLoad in funcsLoad )
+            {
+                functionTagLoad.Values.Add( funcLoad.GetFullyQualifiedIdentifier() );
+            }
+
+            string tickTagPath = minecraftFuncAbsPath + Path.DirectorySeparatorChar + "tick.json";
+            WriteFile( tickTagPath, ToJson( functionTagTick ) );
+
+            string loadTagPath = minecraftFuncAbsPath + Path.DirectorySeparatorChar + "load.json";
+            WriteFile( loadTagPath, ToJson( functionTagLoad ) );
         }
     }
 }

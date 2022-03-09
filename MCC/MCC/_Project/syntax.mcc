@@ -1,0 +1,13 @@
+// here
+function /* here */ random
+// here
+{
+    // this is a comment that can be auto-converted into a "command" comment
+    summon zombie ~ ~ ~ // this is a comment that needs to be extracted in front.
+
+    summon /* this is an infix comment */ zombie ~ ~ ~
+}
+
+// where can you put comments?
+
+// comments put in front, after, or in the middle of a command could belong to that command.

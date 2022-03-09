@@ -10,22 +10,33 @@ namespace MCC.MCCLanguage
     /// </summary>
     public static class LanguageTransformer
     {
+        static void SimplifyMarkStep( MCCFile file, MCCFunction func, MCCCommand command, ref List<MCCCommandMapping> inlineCommands )
+        {
+            if( command.InlineFunctionBody != null )
+            {
+                MCCCommandMapping commandMapping = new MCCCommandMapping( file, func, command );
+
+                inlineCommands.Add( commandMapping );
+
+                foreach( var cmd in command.InlineFunctionBody.Commands )
+                {
+
+                    SimplifyMarkStep( file, func, cmd, ref inlineCommands );
+                }
+            }
+        }
+
         public static void Simplify( MCCFile file )
         {
             List<MCCCommandMapping> inlineCommands = new List<MCCCommandMapping>();
             // this could be appended to the file metadata later.
 
-
             foreach( var func in file.Functions )
             {
                 foreach( var command in func.Body.Commands )
                 {
-                    if( command.InlineFunctionBody != null )
-                    {
-                        MCCCommandMapping commandMapping = new MCCCommandMapping( file, func, command );
+                    SimplifyMarkStep( file, func, command, ref inlineCommands );
 
-                        inlineCommands.Add( commandMapping );
-                    }
                 }
             }
 
@@ -40,7 +51,9 @@ namespace MCC.MCCLanguage
 
                 file.Functions.Add( newFunc );
 
-                command.Cmd.RawCommand += "function " + newFunc.Identifier; // append the new function to the command, the code gen will know what to do with it.
+#warning todo - normalization inside parser?
+                command.Cmd.RawCommand = command.Cmd.RawCommand.TrimEnd(); // normalize the command so there's always only one space between it and the function keyword.
+                command.Cmd.RawCommand += " function " + newFunc.Identifier; // append the new function to the command, the code gen will know what to do with it.
                 i++;
             }
         }

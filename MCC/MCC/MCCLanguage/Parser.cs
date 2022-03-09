@@ -186,9 +186,31 @@ namespace MCC.MCCLanguage
 
             StringBuilder sb = new StringBuilder();
 
+            int nestLevel = 0;
+            bool wasNested = false;
+
 #warning refactor this to not be reliant on the newline
-            while( CurrentChar != '\n' && CurrentChar != '\r' /*&& CurrentChar != '}'*/ ) // either newline or the encapsulating function ended (need to be wary of NBT)
+            while( CurrentChar != '\n' && CurrentChar != '\r' ) // either newline or the encapsulating function ended (need to be wary of NBT)
             {
+                if( CurrentChar == '{' )
+                {
+                    nestLevel++;
+                    wasNested = true;
+                }
+                if( nestLevel > 0 && CurrentChar == '}' )
+                    nestLevel--;
+
+                // refactor this mess using a proper NBT parser.
+                if( nestLevel == 0 && CurrentChar == '}' )
+                {
+                    if( wasNested )
+                    {
+                        sb.Append( CurrentChar );
+                        Pos++;
+                    }
+                    break;
+                }
+
                 sb.Append( CurrentChar );
                 Pos++;
             }

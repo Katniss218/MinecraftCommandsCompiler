@@ -11,7 +11,7 @@ namespace MCC.OutputLanguage.Infrastructure
     public class Tag
     {
         [JsonProperty( "replace" )]
-        public bool Replace { get; set; }
+        public bool? Replace { get; set; }
 
         [JsonProperty("values")]
         public List<string> Values { get; set; } = new List<string>();
