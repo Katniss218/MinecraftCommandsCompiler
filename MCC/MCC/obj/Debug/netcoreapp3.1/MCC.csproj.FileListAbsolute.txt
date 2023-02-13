@@ -11,7 +11,6 @@ E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.csproj.Core
 E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.dll
 E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.pdb
 E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.genruntimeconfig.cache
-E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.csproj.AssemblyReference.cache
 E:\GIT\MinecraftCommandsCompiler\MCC\MCC\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
 E:\GIT\MinecraftCommandsCompiler\MCC\MCC\obj\Debug\netcoreapp3.1\MCC.csproj.CopyComplete
 E:\GIT\MinecraftCommandsCompiler\MCC\MCC\bin\Debug\netcoreapp3.1\_Project\test.mcc

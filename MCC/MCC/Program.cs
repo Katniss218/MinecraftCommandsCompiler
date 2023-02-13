@@ -1,5 +1,6 @@
 ﻿using MCC.MCCLanguage;
 using MCC.MCCLanguage.Infrastructure;
+using MCC.MCCLanguage.Parsing;
 using MCC.OutputLanguage;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,13 @@ namespace MCC
     {
         static void Main( string[] args )
         {
+            Lexer l = new Lexer();
+            l.SetFile( "test.mcc", @"function spawn_enemy
+{
+    summon zombie ~ ~ ~
+}" );
+            l.Lex();
+
             MCCProject proj = new MCCProject();
 
             List<MCCFile> parsedFiles = new List<MCCFile>();
@@ -40,7 +48,7 @@ namespace MCC
 
             foreach( var f in parsedFiles )
             {
-                LanguageTransformer.Simplify( f );
+                LanguageLowerer.Simplify( f );
             }
 
             proj.Mappings = Mapper.GetFunctionMapAndValidate( proj.Files ); // re-map to allow calling the generated functions.

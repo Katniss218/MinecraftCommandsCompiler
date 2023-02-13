@@ -28,6 +28,17 @@ namespace MCC.MCCLanguage
             }
         }
 
+        public char Seek( int forward )
+        {
+            int index = Pos + forward;
+            if( index < 0 || index >= S.Length )
+            {
+                throw new Exception( "Out of bounds" );
+            }
+
+            return S[index];
+        }
+
 
         public Parser()
         {
@@ -94,7 +105,17 @@ namespace MCC.MCCLanguage
             }
         }
 
-        public void EatWhiteSpaces(bool includeNewLines = true)
+        public void EatComment()
+        {
+            Pos++; // first /
+            Pos++; // second /
+            while( CurrentChar != '\r' && CurrentChar != '\n' )
+            {
+                Pos++;
+            }
+        }
+
+        public void EatWhiteSpaces( bool includeNewLines = true )
         {
             try
             {
@@ -189,7 +210,7 @@ namespace MCC.MCCLanguage
             int nestLevel = 0;
             bool wasNested = false;
 
-#warning refactor this to not be reliant on the newline
+#warning refactor this to use the lexer and not be reliant on the newline
             while( CurrentChar != '\n' && CurrentChar != '\r' ) // either newline or the encapsulating function ended (need to be wary of NBT)
             {
                 if( CurrentChar == '{' )
@@ -241,7 +262,7 @@ namespace MCC.MCCLanguage
         public MCCFunction.FunctionBody EatFunctionBody()
         {
             // function_body
-            //  : '{' (whitespace* command whitespace*)* '}'
+            //  : '{' (whitespace* (command|comment) whitespace*)* '}'
             //  ;
 
             EatKeyword( "{" );
@@ -251,14 +272,20 @@ namespace MCC.MCCLanguage
             {
                 EatWhiteSpaces();
 
-                MCCCommand command = EatCommand();
+                if( CurrentChar == '/' && Seek( 1 ) == '/' )
+                {
+                    EatComment();
+                }
+                else
+                {
+                    MCCCommand command = EatCommand();
+                    if( command != null )
+                    {
+                        body.Commands.Add( command );
+                    }
+                }
 
                 EatWhiteSpaces();
-
-                if( command != null )
-                {
-                    body.Commands.Add( command );
-                }
             }
 
             EatKeyword( "}" );
@@ -323,7 +350,7 @@ namespace MCC.MCCLanguage
 
             string @namespace = EatIdentifier();
 
-            EatWhiteSpaces(false);
+            EatWhiteSpaces( false );
             EatNewLine();
 
             MCCFile file = new MCCFile( @namespace, filePath );

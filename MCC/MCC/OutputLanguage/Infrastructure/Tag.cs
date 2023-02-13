@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace MCC.OutputLanguage.Infrastructure
 {
     /// <summary>
-    /// Represents the Minecraft block, item, function, etc tag json file
+    /// Represents a single tag JSON file (tags contain groups of resources, like items, entities, functions, etc).
     /// </summary>
     public class Tag
     {

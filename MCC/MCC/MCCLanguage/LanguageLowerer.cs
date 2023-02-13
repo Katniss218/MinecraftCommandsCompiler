@@ -6,9 +6,9 @@ using System.Text;
 namespace MCC.MCCLanguage
 {
     /// <summary>
-    /// Performs transformation on the language to bring it to the simplest form. To a form that code gen can use.
+    /// Performs 'Lowering' on the mcc language. Expresses complex mcc concepts with simpler ones. The result is fed to the code generator.
     /// </summary>
-    public static class LanguageTransformer
+    public static class LanguageLowerer
     {
         static void SimplifyMarkStep( MCCFile file, MCCFunction func, MCCCommand command, ref List<MCCCommandMapping> inlineCommands )
         {

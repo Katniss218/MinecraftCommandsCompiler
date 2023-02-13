@@ -5,6 +5,9 @@ using System.Text;
 
 namespace MCC.OutputLanguage.Infrastructure
 {
+    /// <summary>
+    /// Represents the .mcmeta file inside a datapack.
+    /// </summary>
     public class McMeta
     {
         public class PackData

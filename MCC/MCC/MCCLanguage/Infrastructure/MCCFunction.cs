@@ -4,6 +4,9 @@ using System.Text;
 
 namespace MCC.MCCLanguage.Infrastructure
 {
+    /// <summary>
+    /// Represents a single script function in the MCC language.
+    /// </summary>
     public class MCCFunction
     {
         public class FunctionBody

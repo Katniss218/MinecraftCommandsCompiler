@@ -9,8 +9,13 @@ using System.Text;
 
 namespace MCC.OutputLanguage
 {
+    /// <summary>
+    /// Generates mcfunction files.
+    /// </summary>
     public class CodeGenerator
     {
+        const char NAMESPACED_ID_DIRECTORY_SEPARATOR = '/';
+
         /// <summary>
         /// Returns the namespaced ID used to call an .mcfunction file from a datapack
         /// </summary>
@@ -28,7 +33,7 @@ namespace MCC.OutputLanguage
             }
             else
             {
-                return $"{namespaceWords[0]}:{string.Join( "/", namespaceWords[1..] )}/{functionName}";
+                return $"{namespaceWords[0]}:{string.Join( NAMESPACED_ID_DIRECTORY_SEPARATOR, namespaceWords[1..] )}/{functionName}";
             }
         }
 
@@ -49,7 +54,7 @@ namespace MCC.OutputLanguage
             {
                 return namespaceWords[0]
                     + Path.DirectorySeparatorChar + "functions"
-                    + Path.DirectorySeparatorChar + string.Join( "/", namespaceWords[1..] )
+                    + Path.DirectorySeparatorChar + string.Join( NAMESPACED_ID_DIRECTORY_SEPARATOR, namespaceWords[1..] )
                     + Path.DirectorySeparatorChar + functionName + ".mcfunction";
             }
         }
@@ -106,11 +111,16 @@ namespace MCC.OutputLanguage
             File.WriteAllText( filePath, contents, new UTF8Encoding( false ) );
         }
 
+        /// <summary>
+        /// Main method - compiles the MCC project into a datapack.
+        /// </summary>
+        /// <param name="outputPath"></param>
+        /// <param name="datapackName"></param>
         public void GenerateOutput( string outputPath, string datapackName )
         {
 #warning todo - generator tests
             string datapackPath = outputPath
-                        + datapackName;
+                + datapackName;
 
             McMeta pack = new McMeta()
             {
@@ -124,7 +134,7 @@ namespace MCC.OutputLanguage
             WriteFile( datapackPath + Path.DirectorySeparatorChar + "pack.mcmeta", ToJson( pack ) );
 
             string dataPath = datapackName
-                        + Path.DirectorySeparatorChar + "data";
+                + Path.DirectorySeparatorChar + "data";
 
             string minecraftNamespacePath = dataPath
                 + Path.DirectorySeparatorChar + "minecraft";

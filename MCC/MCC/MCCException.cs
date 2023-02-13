@@ -4,6 +4,9 @@ using System.Text;
 
 namespace MCC
 {
+    /// <summary>
+    /// An exception that is thrown when the process of compiling an MCC project into a datapack fails.
+    /// </summary>
     public class MCCException : Exception
     {
         public MCCException() : base()
@@ -11,7 +14,7 @@ namespace MCC
 
         }
 
-        public MCCException( string message ) : base(message)
+        public MCCException( string message ) : base( message )
         {
 
         }
