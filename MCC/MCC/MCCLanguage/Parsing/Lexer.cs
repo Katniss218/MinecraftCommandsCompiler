@@ -4,10 +4,8 @@ namespace MCC.MCCLanguage.Parsing
 {
     public class Lexer
     {
-        private List<SyntaxToken> _tokens;
-
-        private string _fileName;
-        private string _string;
+        private string _filePath;
+        private string _s;
         private int _pos;
 
         public Lexer()
@@ -15,22 +13,22 @@ namespace MCC.MCCLanguage.Parsing
 
         }
 
-        public void Reset( string fileName, string stringToLex )
+        public void SetFile( string filePath, string fileContents )
         {
-            this._tokens = new List<SyntaxToken>();
-            this._fileName = fileName;
-            this._string = stringToLex;
+            this._filePath = filePath;
+            this._s = fileContents;
+            this._pos = 0;
         }
 
 
         protected char PeekChar()
         {
-            return _string[_pos];
+            return _s[_pos];
         }
 
         protected char PeekChar( int offset )
         {
-            return _string[_pos + offset];
+            return _s[_pos + offset];
         }
 
         protected int Advance( int step = 1 )
@@ -42,52 +40,53 @@ namespace MCC.MCCLanguage.Parsing
 
         private string GetTokenValue( int begin )
         {
-            return _string[begin.._pos];
+            return _s[begin.._pos];
         }
 
-        public void Lex()
+        private List<SyntaxToken> LexFirstPass()
         {
+            List<SyntaxToken> tokens = new List<SyntaxToken>();
+
             int begin = _pos;
 
-            while( _pos < _string.Length - 1 )
+            while( _pos < _s.Length - 1 )
             {
                 if( PeekChar() == '{' )
                 {
                     begin = Advance();
 
-                    _tokens.Add( new SyntaxToken( SyntaxTokenType.OpenCurlyBracket, GetTokenValue( begin ), LineInfo.Calculate( _fileName, _string, begin ) ) );
+                    tokens.Add( new SyntaxToken( SyntaxTokenType.OpenCurlyBracket, GetTokenValue( begin ), LineInfo.Calculate( _filePath, _s, begin ) ) );
                 }
                 if( PeekChar() == '}' )
                 {
                     begin = Advance();
 
-                    _tokens.Add( new SyntaxToken( SyntaxTokenType.CloseCurlyBracket, GetTokenValue( begin ), LineInfo.Calculate( _fileName, _string, begin ) ) );
+                    tokens.Add( new SyntaxToken( SyntaxTokenType.CloseCurlyBracket, GetTokenValue( begin ), LineInfo.Calculate( _filePath, _s, begin ) ) );
                 }
                 if( PeekChar() == '[' )
                 {
                     begin = Advance();
 
-                    _tokens.Add( new SyntaxToken( SyntaxTokenType.OpenSquareBracket, GetTokenValue( begin ), LineInfo.Calculate( _fileName, _string, begin ) ) );
+                    tokens.Add( new SyntaxToken( SyntaxTokenType.OpenSquareBracket, GetTokenValue( begin ), LineInfo.Calculate( _filePath, _s, begin ) ) );
                 }
                 if( PeekChar() == ']' )
                 {
                     begin = Advance();
 
-                    _tokens.Add( new SyntaxToken( SyntaxTokenType.CloseSquareBracket, GetTokenValue( begin ), LineInfo.Calculate( _fileName, _string, begin ) ) );
+                    tokens.Add( new SyntaxToken( SyntaxTokenType.CloseSquareBracket, GetTokenValue( begin ), LineInfo.Calculate( _filePath, _s, begin ) ) );
                 }
                 if( PeekChar() == '\n' )
                 {
                     begin = Advance();
 
-
-                    _tokens.Add( new SyntaxToken( SyntaxTokenType.NewLine, GetTokenValue( begin ), LineInfo.Calculate( _fileName, _string, begin ) ) );
+                    tokens.Add( new SyntaxToken( SyntaxTokenType.NewLine, GetTokenValue( begin ), LineInfo.Calculate( _filePath, _s, begin ) ) );
                 }
                 else if( PeekChar() == '\r' && PeekChar( 1 ) == '\n' )
                 {
                     begin = Advance( 2 );
 
 
-                    _tokens.Add( new SyntaxToken( SyntaxTokenType.NewLine, GetTokenValue( begin ), LineInfo.Calculate( _fileName, _string, begin ) ) );
+                    tokens.Add( new SyntaxToken( SyntaxTokenType.NewLine, GetTokenValue( begin ), LineInfo.Calculate( _filePath, _s, begin ) ) );
                 }
                 else if( PeekChar() == '/' )
                 {
@@ -96,21 +95,49 @@ namespace MCC.MCCLanguage.Parsing
                     if( PeekChar() == '/' )
                     {
                         Advance();
-                        _tokens.Add( new SyntaxToken( SyntaxTokenType.DoubleSlash, GetTokenValue( begin ), LineInfo.Calculate( _fileName, _string, begin ) ) );
+                        tokens.Add( new SyntaxToken( SyntaxTokenType.DoubleSlash, GetTokenValue( begin ), LineInfo.Calculate( _filePath, _s, begin ) ) );
                     }
                     else if( PeekChar() == '*' )
                     {
                         Advance();
-                        _tokens.Add( new SyntaxToken( SyntaxTokenType.SlashAsterisk, GetTokenValue( begin ), LineInfo.Calculate( _fileName, _string, begin ) ) );
+                        tokens.Add( new SyntaxToken( SyntaxTokenType.SlashAsterisk, GetTokenValue( begin ), LineInfo.Calculate( _filePath, _s, begin ) ) );
                     }
                     else
                     {
-                        _tokens.Add( new SyntaxToken( SyntaxTokenType.Slash, GetTokenValue( begin ), LineInfo.Calculate( _fileName, _string, begin ) ) );
+                        tokens.Add( new SyntaxToken( SyntaxTokenType.Slash, GetTokenValue( begin ), LineInfo.Calculate( _filePath, _s, begin ) ) );
                     }
                 }
-                // todo - multi-step tokens.
-                // scan text
+                else
+                {
+                    begin = Advance();
+
+                    tokens.Add( new SyntaxToken( SyntaxTokenType.Slash, GetTokenValue( begin ), LineInfo.Calculate( _filePath, _s, begin ) ) );
+                }
             }
+            return tokens;
+        }
+
+        public List<SyntaxToken> LexSecondPass( List<SyntaxToken> inTokens )
+        {
+            List<SyntaxToken> tokens = new List<SyntaxToken>();
+            // recursively combine tokens until there is nothing changing.
+
+            List<SyntaxToken> currentTokens = new List<SyntaxToken>(); // the tokens that we will combine in this iteration.
+
+            foreach( var token in inTokens )
+            {
+                if( token.Type == SyntaxTokenType.Text )
+                {
+
+                }
+            }
+        }
+
+        public List<SyntaxToken> Lex()
+        {
+            List<SyntaxToken> tokens = LexFirstPass();
+
+
         }
     }
 }
